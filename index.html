@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+</head>
+
+
+<body>
+    <h1>Enter the following animal attributes</h1>
+    <input id="type" placeholder="Type">
+    <input id="legs" placeholder="Legs">
+    <input id="food" placeholder="favorite food">
+    <input id="numId" placeholder="id">
+    <button onclick="addNewAnimal()">Add</button>
+    <button onclick="updAnimal()">Update</button>
+    <button onclick="delAnimal()">Delete</button>
+    <button onclick="getData()">Display</button>
+    <div id="disp1"></div>
+    <script>
+      let animalInfo = [];
+
+      const addNewAnimal = () => {
+        let numD = parseInt(document.getElementById('numId').value);
+        let inType = document.getElementById('type').value;
+        let inLegs = parseInt(document.getElementById('legs').value);
+        let inFood = document.getElementById('food').value;
+        // Call axios.post to create a new Animal
+        axios.post('http://localhost:3000/Anima', { type: inType, legs: inLegs, favFood: inFood, id: numD })
+          .then(res => {
+            console.log(res.data);
+            animalInfo.push({ type: inType, legs: inLegs, favFood: inFood, id: numD });
+          })
+      }
+
+      // update
+      const updAnimal = () => {
+        let numD = parseInt(document.getElementById('numId').value);
+        let inType = document.getElementById('type').value;
+        let inLegs = parseInt(document.getElementById('legs').value);
+        let inFood = document.getElementById('food').value; 
+        axios.put(`http://localhost:3000/Anima/${numD}`, { type: inType, legs: inLegs, favFood: inFood})
+        .then(res => console.log(res.data))
+      }
+
+      // Read
+      const getData = () => {
+        axios.get('http://localhost:3000/Anima')
+          .then(res => {
+            console.log(res.data);
+            animalInfo = res.data;
+            displayTable();
+          })
+      }
+
+      // delete
+      const delAnimal = () => {
+        let numD = parseInt(document.getElementById('numId').value)
+
+        axios.delete(`http://localhost:3000/Anima/${numD}`)
+      }
+
+      //Table 
+      const displayTable = () => {
+        const tableInfo = `<table border="1">
+        <tr>
+          <th>Animal Type</th>
+          <th>Legs</th>
+          <th>Favorite Food</th>
+        </tr>
+        ${animalInfo.map(ani => `<tr>
+          <td>${ani.type}</td>
+          <td>${ani.legs}</td>
+          <td>${ani.favFood}</td>
+        </tr>`).join('')}
+        </table>`
+        disp1.innerHTML = tableInfo
+      }
+
+      
+    </script>
+</body>
+
+</html>
